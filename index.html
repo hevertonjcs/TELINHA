@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajude o Orfanato da Irmã Dulce</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Preloads do Player -->
+  <link rel="preload" href="https://scripts.converteai.net/4f3c4019-65f3-458c-8a77-7c52ec5fa8a0/players/689c41d78b131b7cf620cd85/v4/embed.html">
+  <script>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
+  <link rel="preload" href="https://orfanatoirmadulce.com/4f3c4019-65f3-458c-8a77-7c52ec5fa8a0/players/689c41d78b131b7cf620cd85/v4/player.js" as="script">
+  <link rel="preload" href="https://orfanatoirmadulce.com/lib/js/smartplayer-wc/v4/smartplayer.js" as="script">
+  <link rel="preload" href="https://orfanatoirmadulce.com/4f3c4019-65f3-458c-8a77-7c52ec5fa8a0/689c40e618e4bd635c158f79/main.m3u8" as="fetch">
+</head>
+<body>
+
+  <!-- HEADER FIXO -->
+  <header class="header">
+    <img src="img/10.png" alt="Cabeçalho">
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main">
+
+    <!-- BLOCO VIDEO -->
+    <section class="section-card">
+      <p id="category">SOLIDARIEDADE / INFÂNCIA</p>
+      <h1>Ajude o <strong>Orfanato da Irmã Dulce</strong></h1>
+      <p class="id">ID: 7854321</p>
+
+      <!-- Player -->
+      <div class="video-container">
+        <div id="vid_689c41d78b131b7cf620cd85" style="position:relative;width:100%;padding:56.25% 0 0;">
+          <img decoding="async" src="https://images.converteai.net/4f3c4019-65f3-458c-8a77-7c52ec5fa8a0/players/689c41d78b131b7cf620cd85/thumbnail.jpg" alt="Vídeo Orfanato" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        </div>
+      </div>
+
+      <img src="img/5.png" alt="Corações recebidos e doação protegida" style="margin:15px auto;display:block;">
+    </section>
+
+    <!-- PIX -->
+    <section class="pix-card">
+      <h3>Chave Pix para o valor que o seu coração mandar! ❤️</h3>
+      <input type="text" id="pixKey1" readonly value="pix@MEPAGABORABORA.bora">
+
+      <div class="pix-buttons">
+        <button onclick="copiarTexto('pixKey1','pixNotification1')">Copiar Chave Pix</button>
+        <button onclick="abrirQrModal()">Gerar QR Code Pix</button>
+      </div>
+
+      <p><b>Nome do recebedor:</b> ORFANATO IRMA DULCE LTDA</p>
+      <div class="notification" id="pixNotification1">Copiado com sucesso!</div>
+    </section>
+
+    <!-- MODAL GERAR QR CODE -->
+    <div id="qrModal" class="popup-overlay">
+      <div class="popup">
+        <button class="close-btn" onclick="fecharQrModal()">&times;</button>
+        <h2>💝 Gerar QR Code Pix</h2>
+        <p>Escolha um valor ou digite o quanto deseja doar:</p>
+
+        <!-- Botões de valores rápidos -->
+        <div class="quick-values">
+          <button type="button" onclick="setValorPix(20,this)">R$20</button>
+          <button type="button" onclick="setValorPix(30,this)">R$30</button>
+          <button type="button" onclick="setValorPix(50,this)">R$50</button>
+          <button type="button" onclick="setValorPix(100,this)">R$100</button>
+          <button type="button" onclick="setValorPix(150,this)">R$150</button>
+          <button type="button" onclick="setValorPix(300,this)">R$300</button>
+        </div>
+
+        <!-- Campo de valor manual -->
+        <input type="number" id="pixValor" placeholder="Ou digite um valor" step="0.01" min="1">
+
+        <!-- Botão gerar QR Code -->
+        <button class="btn-gerar" onclick="gerarPixComDados()">Gerar QR Code</button>
+
+        <div id="qrResultado" style="margin-top:15px; display:none;">
+          <p><b>QR Code:</b></p>
+          <img id="qrImagem" src="" alt="QR Code Pix" style="max-width:200px; margin:10px auto; display:block;">
+          <p><b>Copia e Cola:</b></p>
+          <input type="text" id="pixCopiaCola" readonly>
+          <button onclick="copiarTexto('pixCopiaCola','pixNotificacaoQr')">Copiar Código</button>
+          <div class="notification" id="pixNotificacaoQr">Copiado com sucesso!</div>
+          <div id="pixStatus" style="margin-top:10px; display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DADOS DO DOADOR -->
+    <div id="dadosDoadorModal" class="popup-overlay" style="display:none; z-index:9999;">
+      <div class="popup">
+        <button class="close-btn" onclick="fecharDadosModal()">&times;</button>
+        <h2>Seus Dados</h2>
+        <p>Preencha seus dados para concluir a doação:</p>
+
+        <input type="text" id="doadorNome" placeholder="Nome completo" required>
+        <input type="text" id="doadorDocumento" placeholder="CPF ou CNPJ" required>
+        <input type="email" id="doadorEmail" placeholder="Seu email" required style="border:2px solid #00C696; padding:10px; border-radius:8px; width:100%; box-sizing:border-box;">
+
+        <button class="btn-gerar" onclick="gerarPixComDados()">Confirmar e Gerar QR Code</button>
+      </div>
+    </div>
+
+    <!-- DESCRIÇÃO / CAMPANHA -->
+    <section class="campaign-box section-card">
+      <h2>Essas crianças não podem esperar — cada dia sem ajuda é mais um prato vazio, mais um sonho interrompido.</h2>
+      <p class="campaign-date">Campanha criada em: 09/08/2025</p>
+      <p>
+        No Orfanato da Irmã Dulce, dezenas de crianças carentes encontram abrigo, alimento e amor.
+        Mas a realidade é dura: a despensa está ficando vazia, as contas acumulam e os recursos
+        para manter as atividades estão chegando ao fim.
+        Sem sua ajuda, portas podem se fechar, deixando essas crianças sem o lar que as protege.
+      </p>
+      <p>
+        Sua doação é mais do que dinheiro — é alimento, é roupa, é educação, é a chance de um futuro digno.
+        Cada real faz diferença.
+        <strong class="highlight">
+          Hoje você pode ser a mão que segura, o abraço que conforta, a esperança que reacende.
+        </strong>
+      </p>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq section-card">
+      <h2 class="section-title">Perguntas Frequentes</h2>
+      <div class="faq-item">
+        <h3>Como funciona a doação?</h3>
+        <p>Você pode doar qualquer valor via PIX usando a chave acima. Todo o valor é destinado diretamente ao orfanato.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Posso ajudar de outra forma?</h3>
+        <p>Sim! Além das doações financeiras, você pode colaborar divulgando essa campanha ou oferecendo trabalho voluntário.</p>
+      </div>
+      <div class="faq-item">
+        <h3>O que é feito com as doações?</h3>
+        <p>As doações são usadas para alimentação, roupas, medicamentos, pagamento de contas e manutenção do espaço.</p>
+      </div>
+    </section>
+
+    <!-- COMENTÁRIOS -->
+    <section class="comments-section section-card">
+      <h2 class="section-title">Depoimentos</h2>
+      <div class="comment">
+        <img src="img/9-150x150.jpg" alt="Avatar Maria" class="avatar">
+        <div class="comment-content">
+          <strong>Maria Souza</strong>
+          <p>Deus abençoe essas crianças! Fiz minha contribuição com muito amor ❤️</p>
+        </div>
+      </div>
+      <div class="comment">
+        <img src="img/images (1).jpeg" alt="Avatar Ana" class="avatar">
+        <div class="comment-content">
+          <strong>Ana Clara</strong>
+          <p>Que iniciativa linda! Acabei de doar R$50, espero que ajude!</p>
+        </div>
+      </div>
+      <div class="comment">
+        <img src="img/images (3).jpeg" alt="Avatar Carlos" class="avatar">
+        <div class="comment-content">
+          <strong>Carlos Mendes</strong>
+          <p>Parabéns pelo trabalho incrível! Doei e vou ajudar a divulgar.</p>
+        </div>
+      </div>
+      <div class="comment">
+        <img src="img/images.jpeg" alt="Avatar Luiza" class="avatar">
+        <div class="comment-content">
+          <strong>Luiza Ferreira</strong>
+          <p>Essa causa toca o coração. Contribuí com R$100 e desejo força para todos!</p>
+        </div>
+      </div>
+
+      <!-- Caixa de comentário (estético) -->
+      <div class="comment-box">
+        <textarea placeholder="Escreva seu comentário..."></textarea>
+        <button class="btn-comment">Enviar Comentário</button>
+      </div>
+    </section>
+
+    <!-- PIX FINAL -->
+    <div class="pix-card">
+      <p><b>Chave Pix para o valor que o seu coração mandar! ❤️</b></p>
+      <p><b>Chave Email:</b></p>
+      <input type="text" id="pixKeyFooter" readonly value="pix@orfanatoirmadulce.com">
+      <div class="pix-buttons">
+        <button onclick="copiarTexto('pixKeyFooter','pixNotificationFooter')">Copiar Chave Pix</button>
+        <button onclick="abrirQrModal()">Gerar QR Code Pix</button>
+      </div>
+      <div class="notification" id="pixNotificationFooter">Copiado com sucesso!</div>
+      <p><b>Nome do recebedor: ORFANATO IRMA DULCE LTDA</b></p>
+    </div>
+
+  </main>
+
+  <!-- POPUPS -->
+  <div id="donationPopup" class="popup-overlay">
+    <div class="popup">
+      <button id="closePopup" class="close-btn">&times;</button>
+      <img src="img/cancao-nova-logo.png" alt="Selo de Segurança">
+      <h2>Ajude agora!</h2>
+      <p>Sua doação faz a diferença. Obrigado por apoiar o Orfanato da Irmã Dulce ❤️</p>
+      <input type="text" id="pixKey2" readonly value="pix@pixquevamoscriar.bora">
+      <div class="pix-buttons">
+        <button onclick="copiarTexto('pixKey2','pixNotification2')">Copiar Chave Pix</button>
+        <button onclick="abrirQrModal()">Gerar QR Code Pix</button>
+      </div>
+      <div class="notification" id="pixNotification2">Copiado com sucesso!</div>
+    </div>
+  </div>
+
+  <div id="rosaryPopup" class="rosary-popup-overlay">
+    <div class="rosary-popup">
+      <button id="closeRosaryPopup" class="close-btn">&times;</button>
+      <img src="img/20.png" alt="Terço Abençoado">
+      <h2>Faça uma Doação de R$50 e Receba um Terço Abençoado!</h2>
+      <p>
+        Sua doação de R$50 ajuda a pagar o aluguel do Orfanato da Irmã Dulce,
+        garantindo um lar seguro para nossas crianças.  
+        Como agradecimento, receba um terço abençoado, símbolo de fé e esperança.
+      </p>
+      <input type="text" id="pixKey3" readonly value="pix@pixquevamoscriar.bora">
+      <div class="pix-buttons">
+        <button onclick="copiarTexto('pixKey3','pixNotification3')">Copiar Chave Pix</button>
+        <button onclick="abrirQrModal()">Gerar QR Code Pix</button>
+      </div>
+      <div class="notification" id="pixNotification3">Copiado com sucesso!</div>
+    </div>
+  </div>
+
+  <!-- POPUP DE AGRADECIMENTO -->
+  <div id="thankYouPopup" class="popup-overlay" style="display:none;">
+    <div class="popup">
+      <button id="closeThankYou" class="close-btn">&times;</button>
+      <h2>🙏 Obrigado por Contribuir!</h2>
+      <p>Sua doação está ajudando a transformar vidas no Orfanato da Irmã Dulce ❤️</p>
+    </div>
+  </div>
+
+  <!-- FOOTER COMPLETO -->
+  <footer class="footer">
+    <div class="footer-logo">
+      <img src="img/15.png" alt="Logo Canção Nova">
+    </div>
+
+    <nav class="footer-menu">
+      <a href="#">Início</a>
+      <a href="#">Sobre Nós</a>
+      <a href="#">Doações</a>
+      <a href="#">Eventos</a>
+      <a href="#">Contato</a>
+    </nav>
+
+    <p>Canção Nova – Comunidade Católica<br>
+    Praça Santos Dias da Silva, 28 Vila Damasceno São Paulo - SP, 05864-210</p>
+    <p>Email: contato@cancaonova.com | Telefone: 0800 9837-916</p>
+    <p>© 2025 Canção Nova. Todos os direitos reservados.</p>
+  </footer>
+
+  <!-- JS -->
+  <script src="js/script.js"></script>
+  <script src="https://orfanatoirmadulce.com/lib/js/smartplayer-wc/v4/smartplayer.js" id="vturb-smartplayer-js" fetchpriority="high"></script>
+
+  <!-- Script oficial do player -->
+  <script type="text/javascript" id="scr_689c41d78b131b7cf620cd85">
+    var s=document.createElement("script");
+    s.src="https://scripts.converteai.net/4f3c4019-65f3-458c-8a77-7c52ec5fa8a0/players/689c41d78b131b7cf620cd85/player.js";
+    s.async=!0;
+    document.head.appendChild(s);
+  </script>
+</body>
+</html>

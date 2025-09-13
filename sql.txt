@@ -1,0 +1,20 @@
+CREATE TABLE pagamentos (
+    transaction_id VARCHAR(100) NOT NULL PRIMARY KEY, -- ID único da transação (SourcePay)
+    status ENUM(
+        'waiting_payment',
+        'pending',
+        'approved',
+        'refused',
+        'in_protest',
+        'refunded',
+        'paid',
+        'cancelled',
+        'chargeback',
+        'desconhecido'
+    ) NOT NULL DEFAULT 'waiting_payment', -- Status oficial da SourcePay
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,       -- Valor da transação
+    payment_method ENUM('pix','boleto','credit_card','desconhecido') 
+        NOT NULL DEFAULT 'desconhecido',              -- Método de pagamento
+    atualizado_em DATETIME NOT NULL,                  -- Última atualização recebida
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP     -- Quando foi inserido no banco
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

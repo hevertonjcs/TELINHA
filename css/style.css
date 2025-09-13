@@ -1,0 +1,465 @@
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background: #fff;
+  color: #333;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.header {
+  width: 100%;
+  background: #0082c0;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 0;
+}
+.header img {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #0082c0;
+  color: white;
+  text-align: center;
+  padding: 30px 15px;
+  margin-top: 50px;
+}
+.footer-logo img {
+  height: 55px;
+  margin-bottom: 10px;
+}
+.footer-menu {
+  margin: 15px 0;
+}
+.footer-menu a {
+  color: white;
+  margin: 0 12px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: opacity 0.2s;
+}
+.footer-menu a:hover {
+  opacity: 0.8;
+}
+.footer p {
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+/* ===== CONTEÚDO PRINCIPAL ===== */
+.main {
+  flex: 1;
+  padding: 20px;
+  margin-top: 0;
+}
+
+/* ===== SEÇÕES EM CARDS ===== */
+.section-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 25px;
+  margin: 30px auto;
+  max-width: 800px;
+  text-align: center;
+}
+
+/* ===== PIX CARD ===== */
+.pix-card {
+  background: #fff;
+  border: 2px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 40px auto;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.pix-card h3 {
+  color: #0082c0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+/* Botões Pix lado a lado */
+.pix-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.pix-buttons button {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* ===== TÍTULOS PADRÃO ===== */
+h2.section-title {
+  font-size: 1.6rem;
+  color: #0082c0;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ===== INPUT PIX ===== */
+input[type="text"], 
+input[type="number"] {
+  padding: 12px;
+  width: 100%;
+  max-width: 350px;
+  margin: 10px auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  display: block;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #444;
+  background: #fafafa;
+}
+
+button {
+  padding: 12px 25px;
+  background: #00c853;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 5px;
+  font-size: 1rem;
+  transition: background 0.2s ease-in-out, transform 0.1s;
+}
+button:hover {
+  background: #009624;
+  transform: scale(1.05);
+}
+
+.notification {
+  display: none;
+  margin-top: 10px;
+  color: #0082c0;
+  font-weight: bold;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ===== QUICK VALUES (valores rápidos do PIX) ===== */
+.quick-values {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.quick-values button {
+  background: #f5f5f5;
+  color: #0082c0;
+  border: 2px solid #0082c0;
+  border-radius: 30px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 90px;
+}
+
+.quick-values button:hover {
+  background: #0082c0;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.quick-values button:active {
+  transform: scale(0.97);
+}
+
+/* Estado ativo (selecionado) */
+.quick-values button.active {
+  background: #0082c0;
+  color: #fff;
+  border-color: #0082c0;
+  box-shadow: 0 0 8px rgba(0,130,192,0.5);
+}
+
+/* ===== CAMPANHA ===== */
+.campaign-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin: 40px auto;
+  max-width: 800px;
+  text-align: justify;
+  line-height: 1.7;
+}
+.campaign-box h2 {
+  color: #d32f2f;
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.campaign-box .campaign-date {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+.campaign-box p {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: justify;
+}
+.campaign-box .highlight {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+/* ===== FAQ ===== */
+.faq {
+  margin: 40px auto;
+  max-width: 800px;
+}
+.faq h2 {
+  font-size: 1.6rem;
+  color: #0082c0;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.faq-item {
+  margin-bottom: 15px;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+.faq-item:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+.faq-item h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #0082c0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+.faq-item h3::after {
+  content: "+";
+  font-weight: bold;
+  color: #0082c0;
+  transition: transform 0.3s;
+}
+.faq-item.active h3::after {
+  content: "−";
+  transform: rotate(180deg);
+}
+.faq-item p {
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 0;
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+  transition: max-height 0.4s ease, margin-top 0.3s ease;
+  text-align: justify;
+}
+.faq-item.active p {
+  max-height: 500px;
+  margin-top: 10px;
+}
+
+/* ===== COMENTÁRIOS ===== */
+.comments-section {
+  margin: 40px auto;
+  max-width: 800px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.comments-section h2 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  color: #0082c0;
+  text-align: center;
+}
+.comment {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.1s;
+}
+.comment:hover {
+  transform: scale(1.01);
+}
+.comment img.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+.comment-content {
+  text-align: left;
+}
+.comment-content strong {
+  color: #0082c0;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Caixa de comentário estética */
+.comment-box {
+  margin-top: 20px;
+  text-align: left;
+}
+.comment-box textarea {
+  width: 100%;
+  min-height: 80px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  resize: vertical;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+.comment-box .btn-comment {
+  background: #0082c0;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+.comment-box .btn-comment:hover {
+  background: #006699;
+}
+
+/* ===== POPUPS ===== */
+.popup-overlay, .rosary-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* base */
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+#qrModal {
+  z-index: 10000 !important; /* sempre acima dos outros popups */
+}
+
+.popup, .rosary-popup {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  padding: 30px 25px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  position: relative;
+  animation: slideUp 0.4s ease;
+}
+.close-btn {
+  position: absolute;
+  top: 10px; 
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #0082c0;
+}
+.popup img, .rosary-popup img {
+  display: block;
+  max-width: 160px;
+  margin: 0 auto 15px auto;
+}
+.popup h2, .rosary-popup h2 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #0082c0;
+}
+.popup p, .rosary-popup p {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .header img {
+    max-height: 180px;
+  }
+  .main {
+    padding: 15px;
+  }
+  .pix-card, .section-card, .comments-section, .campaign-box {
+    margin: 20px;
+    padding: 20px;
+  }
+  h2.section-title {
+    font-size: 1.3rem;
+  }
+  .pix-buttons {
+    flex-direction: column;
+  }
+  .pix-buttons button {
+    width: 100%;
+  }
+  .footer-menu a {
+    display: block;
+    margin: 8px 0;
+  }
+}
