@@ -1,58 +1,61 @@
 <?php
-// status_pix.php
-header("Content-Type: application/json");
+// status_pix.php - Verificar status de uma transação Pix (SourcePay)
 
-// ====== CREDENCIAIS PIXUP ======
-$client_id = "J7TRNP_2107212690294754";
-$client_secret = "c3363e4ca3bcb0db46f4f11910a2a7a7722f4e3d06c59eb175a03d099d946e33";
-
-// Monta autenticação Basic Auth
-$auth = base64_encode($client_id . ":" . $client_secret);
-
-// ====== CAPTURA O ID DA TRANSAÇÃO ======
-$id = $_GET["id"] ?? null;
-
-if (!$id) {
+if (!isset($_GET["id"]) || empty($_GET["id"])) {
+    header("Content-Type: application/json");
     echo json_encode(["erro" => "ID da transação não informado"]);
     exit;
 }
 
-// ====== CONSULTA NA API PIXUP ======
-$ch = curl_init();
-curl_setopt_array($ch, [
-    CURLOPT_URL => "https://api.pixupbr.com/v2/pix/$id",
+$transactionId = $_GET["id"];
+
+// Suas credenciais SourcePay
+$publicKey = "pk_t2mGz4QxqHbA4Z9003PXmDfUxyJl0RxPOpFeodFCwajYDe9h";
+$secretKey = "sk_UzNR4r4Q-W2KdBYoFwm5thXRX3JFlYOnE9C2VfjGFtUGAmzs";
+
+// Monta Basic Auth
+$auth = base64_encode($publicKey . ":" . $secretKey);
+
+// Endpoint da SourcePay para consultar a transação
+$api_url = "https://api.sourcepay.com.br/v1/transactions/" . urlencode($transactionId);
+
+// Requisição CURL
+$curl = curl_init();
+curl_setopt_array($curl, [
+    CURLOPT_URL => $api_url,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => [
-        "Authorization: Basic " . $auth,
+        "Authorization: Basic $auth",
         "Accept: application/json"
-    ]
+    ],
+    CURLOPT_TIMEOUT => 30,
 ]);
 
-$response = curl_exec($ch);
-$err = curl_error($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
 
-// ====== TRATA RESPOSTA ======
+header("Content-Type: application/json");
+
 if ($err) {
-    echo json_encode(["erro" => "Erro ao conectar API: $err"]);
+    echo json_encode(["erro" => "Erro ao conectar API SourcePay: $err"]);
     exit;
 }
 
 $dataResp = json_decode($response, true);
 
-if ($http_code !== 200) {
+if (!$dataResp || isset($dataResp["error"])) {
     echo json_encode([
-        "erro" => "Falha ao consultar pagamento",
-        "http_code" => $http_code,
+        "erro" => "Resposta inválida da API SourcePay",
         "detalhe" => $response
     ]);
     exit;
 }
 
-// ====== RETORNA STATUS ======
+// Retorna somente dados relevantes para o JS
 echo json_encode([
-    "id"     => $dataResp["id"] ?? $id,
-    "status" => $dataResp["status"] ?? "desconhecido",
-    "amount" => $dataResp["amount"] ?? null
-]);
+    "id" => $dataResp["id"] ?? null,
+    "status" => $dataResp["status"] ?? null,
+    "amount" => $dataResp["amount"] ?? null,
+    "resposta_completa" => $dataResp // debug
+], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
