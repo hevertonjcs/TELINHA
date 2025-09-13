@@ -24,6 +24,7 @@ function fecharQrModal() {
 function setValorPix(valor, el) {
   const input = document.getElementById("pixValor");
   input.value = valor;
+  window.valorDoacao = valor; // 🔹 salva também no global
   document.querySelectorAll(".quick-values button").forEach(btn => btn.classList.remove("active"));
   if (el) el.classList.add("active");
 }
@@ -34,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (input) {
     input.addEventListener("input", () => {
       document.querySelectorAll(".quick-values button").forEach(btn => btn.classList.remove("active"));
+      window.valorDoacao = null; // 🔹 reseta se digitar manual
     });
   }
 });
@@ -96,7 +98,12 @@ function confirmarDados() {
   if (!nome || !doc || !email) return alert("Por favor, preencha todos os campos.");
 
   fecharDadosModal();
-  gerarQrCodePix(window.valorDoacao, nome, doc, email);
+
+  // 🔹 pega valor de botão ou digitado
+  const valor = window.valorDoacao || document.getElementById("pixValor").value;
+  if (!valor || valor <= 0) return alert("Por favor, informe um valor válido.");
+
+  gerarQrCodePix(valor, nome, doc, email);
 }
 
 // ===== GERAR QR CODE PIX =====
@@ -203,5 +210,3 @@ if (donationPopup) donationPopup.addEventListener("click", (e) => { if (e.target
 
 // ===== FAQ =====
 document.querySelectorAll(".faq-item").forEach((item) => { item.addEventListener("click", () => item.classList.toggle("active")); });
-
-
