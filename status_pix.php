@@ -52,10 +52,21 @@ if (!$dataResp || isset($dataResp["error"])) {
     exit;
 }
 
-// Retorna somente dados relevantes para o JS
+// Normaliza status (para casar com o script.js)
+$statusOriginal = $dataResp["status"] ?? null;
+$statusPadronizado = $statusOriginal;
+
+if ($statusOriginal === "paid") {
+    $statusPadronizado = "paid"; // já ok
+} elseif ($statusOriginal === "waiting_payment") {
+    $statusPadronizado = "pending"; // padroniza para algo claro
+} elseif ($statusOriginal === "approved") {
+    $statusPadronizado = "paid"; // caso venha approved, trata igual
+}
+
 echo json_encode([
     "id" => $dataResp["id"] ?? null,
-    "status" => $dataResp["status"] ?? null,
+    "status" => $statusPadronizado,
     "amount" => $dataResp["amount"] ?? null,
     "resposta_completa" => $dataResp // debug
 ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
