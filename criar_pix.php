@@ -1,12 +1,12 @@
 <?php
-// criar_pix.php usando Basic Auth PixUp
+// criar_pix.php - Integração com SourcePay (Pix)
 
 // Recebe dados do frontend
 $data = json_decode(file_get_contents("php://input"), true);
 $valor = isset($data["valor"]) ? floatval($data["valor"]) : 0;
-$nome = isset($data["nome"]) ? $data["nome"] : '';
-$documento = isset($data["documento"]) ? $data["documento"] : '';
-$email = isset($data["email"]) ? $data["email"] : '';
+$nome = isset($data["nome"]) ? trim($data["nome"]) : '';
+$documento = isset($data["documento"]) ? preg_replace('/\D/', '', $data["documento"]) : '';
+$email = isset($data["email"]) ? trim($data["email"]) : '';
 
 if ($valor <= 0 || !$nome || !$documento || !$email) {
     header("Content-Type: application/json");
@@ -14,36 +14,52 @@ if ($valor <= 0 || !$nome || !$documento || !$email) {
     exit;
 }
 
-// Configurações PixUp
-$api_url = "https://api.pixupbr.com/v2/pix/qrcode"; // Produção
-$client_id = "agaeverton_7784613094820550";
-$client_secret = "b60859bd9cd8c895f049ef0d89bd024f9408e187c6412f3500f53198a15bf5bf";
+// SourcePay exige amount em centavos
+$valorCentavos = intval(round($valor * 100));
 
-// Monta header Basic Auth
-$credentials = base64_encode($client_id . ":" . $client_secret);
-$headers = [
-    "Authorization: Basic $credentials",
-    "Content-Type: application/json",
-    "Accept: application/json"
-];
+// Credenciais (suas chaves)
+$publicKey = "pk_t2mGz4QxqHbA4Z9003PXmDfUxyJl0RxPOpFeodFCwajYDe9h";
+$secretKey = "sk_UzNR4r4Q-W2KdBYoFwm5thXRX3JFlYOnE9C2VfjGFtUGAmzs";
 
-// Monta payload conforme doc PixUp
+// Monta Basic Auth
+$auth = base64_encode($publicKey . ":" . $secretKey);
+
+// Endpoint da SourcePay
+$api_url = "https://api.sourcepay.com.br/v1/transactions";
+
+// Monta payload (item genérico "Doação")
 $payload = [
-    "amount" => number_format($valor, 2, '.', ''), // 10.00
-    "payer_name" => $nome,
-    "payer_document" => $documento,
-    "payer_email" => $email,
-    "description" => "Doação via Pix"
+    "amount" => $valorCentavos,
+    "currency" => "BRL",
+    "paymentMethod" => "pix",
+    "items" => [[
+        "title" => "Doação",
+        "unitPrice" => $valorCentavos,
+        "quantity" => 1,
+        "tangible" => false
+    ]],
+    "customer" => [
+        "name" => $nome,
+        "email" => $email,
+        "document" => [
+            "number" => $documento,
+            "type" => strlen($documento) > 11 ? "cnpj" : "cpf"
+        ]
+    ]
 ];
 
-// Inicia CURL
+// Requisição CURL
 $curl = curl_init();
 curl_setopt_array($curl, [
     CURLOPT_URL => $api_url,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
     CURLOPT_POSTFIELDS => json_encode($payload),
-    CURLOPT_HTTPHEADER => $headers,
+    CURLOPT_HTTPHEADER => [
+        "Authorization: Basic $auth",
+        "Content-Type: application/json",
+        "Accept: application/json"
+    ],
     CURLOPT_TIMEOUT => 30,
 ]);
 
@@ -54,27 +70,28 @@ curl_close($curl);
 header("Content-Type: application/json");
 
 if ($err) {
-    echo json_encode(["erro" => "Erro ao conectar API PixUp: $err"]);
+    echo json_encode(["erro" => "Erro ao conectar API SourcePay: $err"]);
     exit;
 }
 
-// Decodifica resposta
 $dataResp = json_decode($response, true);
 
-if (!$dataResp || isset($dataResp["error"]) || isset($dataResp["erro"])) {
+if (!$dataResp || isset($dataResp["error"])) {
     echo json_encode([
-        "erro" => "Resposta inválida da API PixUp",
+        "erro" => "Resposta inválida da API SourcePay",
         "detalhe" => $response
     ]);
     exit;
 }
 
-// Retorna os dados importantes
+// Normaliza retorno (SourcePay envia QR Code dentro de pix.qrCode e pix.qrCodeBase64)
+$pixData = $dataResp["pix"] ?? [];
+
 echo json_encode([
     "id" => $dataResp["id"] ?? null,
     "status" => $dataResp["status"] ?? null,
-    "amount" => $dataResp["amount"] ?? $valor,
-    "qr_code_text" => $dataResp["qr_code"] ?? ($dataResp["pix"]["qr_code"] ?? null),
-    "qr_code_image" => $dataResp["qr_code_base64"] ?? ($dataResp["pix"]["qr_code_base64"] ?? null),
+    "amount" => $valor,
+    "qr_code_text" => $pixData["qrCode"] ?? null,
+    "qr_code_image" => $pixData["qrCodeBase64"] ?? null,
     "resposta_completa" => $dataResp // debug
 ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
