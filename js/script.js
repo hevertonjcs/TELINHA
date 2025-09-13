@@ -165,9 +165,19 @@ async function verificarStatusPix(transactionId, statusMsg) {
     const resposta = await fetch("status_pix.php?id=" + transactionId);
     const dados = await resposta.json();
 
-    if (dados.status === "approved" || dados.status === "paid") {
-      if (statusMsg) { statusMsg.innerHTML = "✅ Obrigado por contribuir!"; statusMsg.style.color = "green"; }
+    if (dados.status === "paid") {
+      if (statusMsg) {
+        statusMsg.innerHTML = "✅ Obrigado por contribuir!";
+        statusMsg.style.color = "green";
+      }
       return;
+    }
+
+    if (dados.status === "waiting_payment" || dados.status === "pending") {
+      if (statusMsg) {
+        statusMsg.innerHTML = "⏳ Aguardando pagamento via PIX...";
+        statusMsg.style.color = "black";
+      }
     }
 
     setTimeout(() => verificarStatusPix(transactionId, statusMsg), 5000);
@@ -210,3 +220,4 @@ if (donationPopup) donationPopup.addEventListener("click", (e) => { if (e.target
 
 // ===== FAQ =====
 document.querySelectorAll(".faq-item").forEach((item) => { item.addEventListener("click", () => item.classList.toggle("active")); });
+
