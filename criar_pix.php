@@ -16,8 +16,8 @@ if ($valor <= 0 || !$nome || !$documento || !$email) {
 
 // Configurações PixUp
 $api_url = "https://api.pixupbr.com/v2/pix/qrcode";
-$client_id = "J7TRNP_2107212690294754";  // sua PUBLICKEY
-$client_secret = "c3363e4ca3bcb0db46f4f11910a2a7a7722f4e3d06c59eb"; // SECRETKEY
+$client_id = "agaeverton_7784613094820550";  // sua PUBLICKEY
+$client_secret = "b60859bd9cd8c895f049ef0d89bd024f9408e187c6412f3500f53198a15bf5bf"; // SECRETKEY
 
 // Monta header de autenticação Basic
 $auth_str = base64_encode($client_id . ":" . $client_secret);
@@ -75,3 +75,4 @@ echo json_encode([
     "qr_code_text" => $dataResp["pix"]["qr_code"] ?? null,
     "qr_code_image" => $dataResp["pix"]["qr_code_base64"] ?? null
 ]);
+
