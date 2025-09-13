@@ -1,5 +1,5 @@
 <?php
-// criar_pix.php (corrigido para autenticação OAuth2 PixUp)
+// criar_pix.php usando Basic Auth PixUp
 
 // Recebe dados do frontend
 $data = json_decode(file_get_contents("php://input"), true);
@@ -15,74 +15,35 @@ if ($valor <= 0 || !$nome || !$documento || !$email) {
 }
 
 // Configurações PixUp
-$auth_url = "https://api.pixupbr.com/oauth/token";  // endpoint para gerar token
-$api_url  = "https://api.pixupbr.com/v2/pix/qrcode"; // endpoint para gerar qr code
-$client_id = "agaeverton_7784613094820550";   // sua PUBLICKEY
-$client_secret = "b60859bd9cd8c895f049ef0d89bd024f9408e187c6412f3500f53198a15bf5bf"; // sua SECRETKEY
+$api_url = "https://api.pixupbr.com/v2/pix/qrcode"; // Produção
+$client_id = "agaeverton_7784613094820550";
+$client_secret = "b60859bd9cd8c895f049ef0d89bd024f9408e187c6412f3500f53198a15bf5bf";
 
-// ===== 1) Gera o token OAuth2 =====
-$auth_payload = [
-    "grant_type" => "client_credentials",
-    "client_id" => $client_id,
-    "client_secret" => $client_secret
+// Monta header Basic Auth
+$credentials = base64_encode($client_id . ":" . $client_secret);
+$headers = [
+    "Authorization: Basic $credentials",
+    "Content-Type: application/json",
+    "Accept: application/json"
 ];
 
-$curl = curl_init();
-curl_setopt_array($curl, [
-    CURLOPT_URL => $auth_url,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => http_build_query($auth_payload),
-    CURLOPT_HTTPHEADER => [
-        "Content-Type: application/x-www-form-urlencoded"
-    ],
-    CURLOPT_TIMEOUT => 30,
-]);
-
-$response = curl_exec($curl);
-$err = curl_error($curl);
-curl_close($curl);
-
-if ($err) {
-    header("Content-Type: application/json");
-    echo json_encode(["erro" => "Erro ao conectar API de autenticação PixUp: $err"]);
-    exit;
-}
-
-$tokenResp = json_decode($response, true);
-
-if (!isset($tokenResp["access_token"])) {
-    header("Content-Type: application/json");
-    echo json_encode([
-        "erro" => "Falha ao obter token OAuth2",
-        "detalhe" => $response
-    ]);
-    exit;
-}
-
-$access_token = $tokenResp["access_token"];
-
-// ===== 2) Monta payload para gerar QR Code =====
+// Monta payload conforme doc PixUp
 $payload = [
-    "amount" => number_format($valor, 2, '.', ''), // sempre no formato 10.00
+    "amount" => number_format($valor, 2, '.', ''), // 10.00
     "payer_name" => $nome,
     "payer_document" => $documento,
     "payer_email" => $email,
     "description" => "Doação via Pix"
 ];
 
-// ===== 3) Chama a API do QR Code =====
+// Inicia CURL
 $curl = curl_init();
 curl_setopt_array($curl, [
     CURLOPT_URL => $api_url,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
     CURLOPT_POSTFIELDS => json_encode($payload),
-    CURLOPT_HTTPHEADER => [
-        "Authorization: Bearer $access_token",
-        "Content-Type: application/json",
-        "Accept: application/json"
-    ],
+    CURLOPT_HTTPHEADER => $headers,
     CURLOPT_TIMEOUT => 30,
 ]);
 
@@ -97,6 +58,7 @@ if ($err) {
     exit;
 }
 
+// Decodifica resposta
 $dataResp = json_decode($response, true);
 
 if (!$dataResp || isset($dataResp["error"]) || isset($dataResp["erro"])) {
@@ -107,12 +69,12 @@ if (!$dataResp || isset($dataResp["error"]) || isset($dataResp["erro"])) {
     exit;
 }
 
-// ===== 4) Retorna os dados =====
+// Retorna os dados importantes
 echo json_encode([
     "id" => $dataResp["id"] ?? null,
     "status" => $dataResp["status"] ?? null,
     "amount" => $dataResp["amount"] ?? $valor,
-    "qr_code_text" => $dataResp["qr_code"] ?? null,
-    "qr_code_image" => $dataResp["qr_code_base64"] ?? null,
-    "resposta_completa" => $dataResp // útil para debug
+    "qr_code_text" => $dataResp["qr_code"] ?? ($dataResp["pix"]["qr_code"] ?? null),
+    "qr_code_image" => $dataResp["qr_code_base64"] ?? ($dataResp["pix"]["qr_code_base64"] ?? null),
+    "resposta_completa" => $dataResp // debug
 ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
