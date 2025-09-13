@@ -1,46 +1,38 @@
 <?php
-// webhook.php
-header("Content-Type: application/json");
+// webhook.php - Webhook da SourcePay para atualização de pagamentos Pix
 
-// Captura o JSON enviado pela PixUp
+// Lê o corpo da requisição
 $input = file_get_contents("php://input");
 $data = json_decode($input, true);
 
-// Log para debug (salva em arquivo)
-file_put_contents("pixup_webhook.log", date("Y-m-d H:i:s") . " - " . $input . PHP_EOL, FILE_APPEND);
+// Log básico para debug
+file_put_contents(__DIR__ . "/webhook_log.txt", date("Y-m-d H:i:s") . " - " . $input . PHP_EOL, FILE_APPEND);
 
-// Caso o JSON esteja vazio
-if (!$data) {
+// Verifica se veio um ID de transação
+if (!$data || !isset($data["id"])) {
     http_response_code(400);
     echo json_encode(["erro" => "Payload inválido"]);
     exit;
 }
 
-/**
- * Exemplo esperado (ajuste conforme PixUp envia):
- * {
- *   "id": "123456",
- *   "status": "paid",
- *   "amount": 20.00,
- *   "payer": {
- *       "name": "João da Silva",
- *       "document": "12345678909",
- *       "email": "teste@email.com"
- *   }
- * }
- */
+$transactionId = $data["id"];
+$status = $data["status"] ?? "desconhecido";
+$valor = $data["amount"] ?? null;
 
-// ====== Aqui você faria update no banco ======
-$id     = $data["id"] ?? null;
-$status = $data["status"] ?? null;
-$amount = $data["amount"] ?? null;
+// Aqui você poderia atualizar o status no seu banco de dados
+// Exemplo:
+try {
+    // require_once 'includes/db.php'; // habilite se tiver conexão com banco
+    // $stmt = $conn->prepare("UPDATE transacoes SET status = ? WHERE transaction_id = ?");
+    // $stmt->bind_param("ss", $status, $transactionId);
+    // $stmt->execute();
 
-if ($id && $status === "paid") {
-    // Exemplo: atualizar doação no banco
-    // require_once("db.php");
-    // $pdo->prepare("UPDATE doacoes SET status = 'pago' WHERE transaction_id = ?")->execute([$id]);
+    // Por enquanto só salva no log
+    file_put_contents(__DIR__ . "/webhook_updates.txt", "Transação {$transactionId} -> Status: {$status}" . PHP_EOL, FILE_APPEND);
+} catch (Exception $e) {
+    file_put_contents(__DIR__ . "/webhook_errors.txt", "Erro DB: " . $e->getMessage() . PHP_EOL, FILE_APPEND);
 }
 
-// Resposta obrigatória
+// Retorna OK para a SourcePay
 http_response_code(200);
-echo json_encode(["ok" => true]);
+echo json_encode(["success" => true, "transactionId" => $transactionId, "status" => $status]);
