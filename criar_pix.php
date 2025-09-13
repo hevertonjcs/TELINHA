@@ -84,14 +84,22 @@ if (!$dataResp || isset($dataResp["error"])) {
     exit;
 }
 
-// Normaliza retorno (SourcePay envia QR Code dentro de pix.qrCode e pix.qrCodeBase64)
+// Normaliza retorno (SourcePay envia QR Code dentro de pix.qrcode)
 $pixData = $dataResp["pix"] ?? [];
+
+$qrText = $pixData["qrcode"] ?? null; // 🔹 campo correto
+$qrImage = null;
+
+// Se quiser imagem pronta, gera via API de QR code
+if ($qrText) {
+    $qrImage = "https://api.qrserver.com/v1/create-qr-code/?data=" . urlencode($qrText) . "&size=250x250";
+}
 
 echo json_encode([
     "id" => $dataResp["id"] ?? null,
     "status" => $dataResp["status"] ?? null,
     "amount" => $valor,
-    "qr_code_text" => $pixData["qrCode"] ?? null,
-    "qr_code_image" => $pixData["qrCodeBase64"] ?? null,
+    "qr_code_text" => $qrText,
+    "qr_code_image" => $qrImage,
     "resposta_completa" => $dataResp // debug
 ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
