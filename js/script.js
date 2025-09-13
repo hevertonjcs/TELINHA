@@ -116,8 +116,8 @@ async function gerarQrCodePix(valor, nome, documento, email) {
 
     if (dados.erro) throw new Error(dados.erro);
 
-    const copiaCola = dados.qr_code_text ?? null;
-    const qrBase64 = dados.qr_code_image ?? null;
+    const copiaCola = dados.qr_code_text ?? dados.pix?.qrCode ?? null;
+    const qrBase64 = dados.qr_code_image ?? dados.pix?.qrCodeBase64 ?? null;
     const transactionId = dados.id ?? null;
 
     if (!copiaCola || !qrBase64) throw new Error("Dados inválidos da API");
@@ -203,4 +203,5 @@ if (donationPopup) donationPopup.addEventListener("click", (e) => { if (e.target
 
 // ===== FAQ =====
 document.querySelectorAll(".faq-item").forEach((item) => { item.addEventListener("click", () => item.classList.toggle("active")); });
+
 
